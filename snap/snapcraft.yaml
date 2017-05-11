@@ -1,0 +1,72 @@
+name: gnome-calendar
+version: 3.24.2
+summary: Calendar for GNOME
+description: |
+
+    GNOME Calendar is a simple and beautiful calendar application designed to 
+    perfectly fit the GNOME desktop. By reusing the components which the GNOME 
+    desktop is build on, Calendar nicely integrates with the GNOME ecosystem.
+
+    We aim to find the perfect balance between nicely crafted features and 
+    user-centred usability. No excess, no lacks. You’ll feel comfortable using 
+    Calendar, like you’ve been using it for ages!
+
+icon: data/icons/org.gnome.Calendar.svg
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: strict
+
+# libgdk is linked with libmirclient, which doesn't seem to end up in
+# the snap otherwise.
+plugs:
+  mir-libs:
+    interface: content
+    content: mir0
+    target: mir-libs
+    default-provider: mir-libs
+
+slots:
+  # for GtkApplication registration
+  gnome-calendar:
+    interface: dbus
+    bus: session
+    name: org.gnome.Calendar
+
+apps:
+  gnome-calendar:
+    command: desktop-launch $SNAP/bin/gnome-calendar
+    environment:
+      GSETTINGS_SCHEMA_DIR: /snap/gnome-calendar/current/share/glib-2.0/schemas
+    plugs:
+      - x11
+      - home
+      - gsettings
+      - mir-libs
+    slots:
+      - gnome-calendar
+
+parts:
+  gnome-calendar:
+    after:
+      - desktop-gtk3
+    plugin: autotools
+    source: .
+    install: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/mir-libs
+      glib-compile-schemas $SNAPCRAFT_PART_INSTALL/share/glib-2.0/schemas
+
+    build-packages:
+      - appstream-util
+      - autoconf-archive
+      - desktop-file-utils
+      - gnome-pkg-tools
+      - gsettings-desktop-schemas-dev
+      - intltool
+      - libecal1.2-dev
+      - libedataserver1.2-dev
+      - libedataserverui1.2-dev
+      - libglib2.0-dev
+      - libgoa-1.0-dev
+      - libgtk-3-dev
+      - libical-dev
+      - pkg-config
