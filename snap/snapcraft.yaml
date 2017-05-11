@@ -55,6 +55,9 @@ parts:
       mkdir -p $SNAPCRAFT_PART_INSTALL/mir-libs
       glib-compile-schemas $SNAPCRAFT_PART_INSTALL/share/glib-2.0/schemas
 
+    stage-packages:
+      - evolution-data-server-common
+
     build-packages:
       - appstream-util
       - autoconf-archive
